@@ -1,16 +1,9 @@
-import numpy as np
-import tkinter as tk
-import config as c
 import create_gui as cg
-from  matplotlib.colors import LinearSegmentedColormap
-cmap=LinearSegmentedColormap.from_list('rg',["r", "w", "g"], N=256) 
 
 
 def main():
-
+    '''Initialize Simulation and start the game.'''
     cg.create_gui()
-
-
 
 
 if __name__ == '__main__':
