@@ -7,7 +7,7 @@ class StochasticBandit():
         self.no_arms = no_arms
         self.reward_scale = reward_scale
         self.std_dev = std_dev
-        self.rewards = np.random.uniform(0, reward_scale, no_arms)
+        self.rewards = np.random.uniform(c.REWARD_LOW_BOUND, reward_scale, no_arms)
 
     def pull_arm(self, arm_index):
         """Return noisy reward when certain arm is selected."""
@@ -42,9 +42,16 @@ class InteractingAgent():
         self.no_rounds += 1
 
     def ucb_policy(self):
-        """Arm selection policy."""
+        """UCB arm selection policy."""
         arm_index = np.argmax(self.ucb_values)
         self.select_action(arm_index)
-        confidence_bound = np.sqrt(2*np.log(1/c.DELTA)/
+        confidence_bound = np.sqrt(2*c.STD_DEV*np.log(1/c.DELTA)/
                                    (self.arms_pulled_counter[arm_index]*self.no_rounds))
         self.ucb_values[arm_index] = self.mean_rewards[arm_index] + confidence_bound
+
+    def ts_policy(self):
+        '''TS arm selection policy.'''
+        sampled_rewards = np.random.multivariate_normal(self.mean_rewards,
+                                                        c.STD_DEV*np.identity(self.no_arms))
+        arm_index = np.argmax(sampled_rewards)
+        self.select_action(arm_index)
