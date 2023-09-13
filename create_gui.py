@@ -30,9 +30,9 @@ def button_function(label_list,
         pulled_counted_list[k]["text"] = "Selected " + str(int(human_agent.arms_pulled_counter[k])) + " time"
     else:
         pulled_counted_list[k]["text"] = "Selected " + str(int(human_agent.arms_pulled_counter[k])) + " times"
-    ucb_pot["value"] = ucb_agent.total_reward/5000
-    ts_pot["value"] = ts_agent.total_reward/5000
-    human_pot["value"] = human_agent.total_reward/5000
+    ucb_pot["value"] = ucb_agent.total_reward/1000
+    ts_pot["value"] = ts_agent.total_reward/1000
+    human_pot["value"] = human_agent.total_reward/1000
 
     if ucb_agent.total_reward > human_agent.total_reward and ucb_agent.total_reward > ts_agent.total_reward:
         ucb_image_label.configure(image=ucb_images[0])
