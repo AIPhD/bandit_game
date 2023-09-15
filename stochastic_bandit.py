@@ -25,6 +25,8 @@ class InteractingAgent():
         self.ucb_values = self.mean_rewards + np.infty * np.ones(self.no_arms)
         self.total_reward = 0
         self.no_rounds = 0
+        self.alpha_params = np.ones(self.no_arms)
+        self.beta_params = np.ones(self.no_arms)
 
     def acumulate_reward(self, inst_reward):
         """Store total accumulated reward."""
@@ -40,6 +42,7 @@ class InteractingAgent():
         self.mean_rewards[arm_index] = self.mean_rewards[arm_index]*old_weight + reward*new_weight
         self.acumulate_reward(reward)
         self.no_rounds += 1
+        return reward
 
     def ucb_policy(self):
         """UCB arm selection policy."""
@@ -51,7 +54,11 @@ class InteractingAgent():
 
     def ts_policy(self):
         '''TS arm selection policy.'''
-        sampled_rewards = np.random.multivariate_normal(self.mean_rewards,
-                                                        c.STD_DEV*np.identity(self.no_arms))
+        for k in np.arange(self.no_arms):
+            sampled_rewards = np.random.beta(self.alpha_params[k], self.beta_params[k])
+
         arm_index = np.argmax(sampled_rewards)
-        self.select_action(arm_index)
+        reward = self.select_action(arm_index)/c.REWARD_SCALE
+        if np.random.uniform(low=c.REWARD_LOW_BOUND/c.REWARD_SCALE) < reward:
+            self.alpha_params[arm_index] += 1
+            self.beta_params[arm_index] += 1
